@@ -1,0 +1,195 @@
+﻿@model Business.DTOs.UniversityDtos.UniversityDTO
+
+@{
+    ViewData["Title"] = "Üniversite Detayları";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Üniversite Detayları
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <dl class="row">
+                                <dt class="col-sm-3">
+                                    <i class="fas fa-hashtag me-1"></i>
+                                    ID:
+                                </dt>
+                                <dd class="col-sm-9">
+                                    <span class="badge bg-primary fs-6">@Model.Id</span>
+                                </dd>
+
+                                <dt class="col-sm-3">
+                                    <i class="fas fa-university me-1"></i>
+                                    Üniversite Adı:
+                                </dt>
+                                <dd class="col-sm-9">
+                                    <h5 class="text-primary mb-0">@Model.Name</h5>
+                                </dd>
+
+                                <dt class="col-sm-3">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    Adres:
+                                </dt>
+                                <dd class="col-sm-9">
+                                    @if (!string.IsNullOrEmpty(Model.Address))
+                                    {
+                                        <div class="border rounded p-2 bg-light">
+                                            @Model.Address
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Adres bilgisi girilmemiş</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-3">
+                                    <i class="fas fa-phone me-1"></i>
+                                    Telefon:
+                                </dt>
+                                <dd class="col-sm-9">
+                                    @if (!string.IsNullOrEmpty(Model.Phone))
+                                    {
+                                        <a href="tel:@Model.Phone" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-phone me-1"></i>
+                                            @Model.Phone
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Telefon bilgisi girilmemiş</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-3">
+                                    <i class="fas fa-envelope me-1"></i>
+                                    E-posta:
+                                </dt>
+                                <dd class="col-sm-9">
+                                    @if (!string.IsNullOrEmpty(Model.Email))
+                                    {
+                                        <a href="mailto:@Model.Email" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-envelope me-1"></i>
+                                            @Model.Email
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">E-posta bilgisi girilmemiş</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-3">
+                                    <i class="fas fa-globe me-1"></i>
+                                    Website:
+                                </dt>
+                                <dd class="col-sm-9">
+                                    @if (!string.IsNullOrEmpty(Model.Website))
+                                    {
+                                        <a href="@Model.Website" target="_blank" class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i>
+                                            Website'yi Ziyaret Et
+                                        </a>
+                                        <br />
+                                        <small class="text-muted">@Model.Website</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Website bilgisi girilmemiş</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Listeye Dön
+                        </a>
+
+                        <div class="btn-group" role="group">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                <i class="fas fa-edit me-1"></i>
+                                Düzenle
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i>
+                                Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İstatistik kartları -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-university fa-2x text-primary mb-2"></i>
+                            <h6 class="card-title">Üniversite ID</h6>
+                            <p class="card-text fs-4 fw-bold text-primary">@Model.Id</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                            <h6 class="card-title">İletişim Bilgileri</h6>
+                            <p class="card-text fs-4 fw-bold text-success">
+                                @{
+                                    int contactCount = 0;
+                                    if (!string.IsNullOrEmpty(Model.Phone)) contactCount++;
+                                    if (!string.IsNullOrEmpty(Model.Email)) contactCount++;
+                                    if (!string.IsNullOrEmpty(Model.Website)) contactCount++;
+                                }
+                                @contactCount/3
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <i class="fas fa-info-circle fa-2x text-info mb-2"></i>
+                            <h6 class="card-title">Kayıt Durumu</h6>
+                            <p class="card-text">
+                                <span class="badge bg-success fs-6">Aktif</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
