@@ -1,0 +1,64 @@
+﻿@model Business.DTOs.DepartmentDtos.DepartmentDTO
+
+@{
+    ViewData["Title"] = "Bölüm Detayları";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Bölüm Detayları
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            <i class="fas fa-building me-1"></i>
+                            Bölüm Adı
+                        </dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-code me-1"></i>
+                            Bölüm Kodu
+                        </dt>
+                        <dd class="col-sm-8">@Model.Code</dd>
+
+                        <dt class="col-sm-4">
+                            <i class="fas fa-university me-1"></i>
+                            Üniversite
+                        </dt>
+                        <dd class="col-sm-8">@ViewBag.UniversityName</dd>
+                    </dl>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Listeye Dön
+                        </a>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                                <i class="fas fa-edit me-1"></i>
+                                Düzenle
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="fas fa-trash me-1"></i>
+                                Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Gerekli JavaScript kodları buraya
+    </script>
+}

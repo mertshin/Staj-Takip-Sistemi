@@ -1,0 +1,172 @@
+﻿@model IEnumerable<Business.DTOs.DepartmentDtos.DepartmentDTO>
+
+@{
+    ViewData["Title"] = "Bölümler";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="fas fa-building me-2"></i>
+                    Bölümler
+                </h2>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Yeni Bölüm Ekle
+                </a>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <!-- Filtre -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="universityId" class="form-label">
+                                <i class="fas fa-university me-1"></i>
+                                Üniversiteye Göre Filtrele
+                            </label>
+                            @Html.DropDownList("universityId", ViewBag.Universities as SelectList, "Tüm Üniversiteler", new { @class = "form-select" })
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-filter me-1"></i>
+                                Filtrele
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>
+                                Temizle
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>
+                                            <i class="fas fa-hashtag me-1"></i>
+                                            ID
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-building me-1"></i>
+                                            Bölüm Adı
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-code me-1"></i>
+                                            Bölüm Kodu
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-university me-1"></i>
+                                            Üniversite
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-user-graduate me-1"></i>
+                                            Öğrenci Sayısı
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-chalkboard-teacher me-1"></i>
+                                            Danışman Sayısı
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-cogs me-1"></i>
+                                            İşlemler
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold">@item.Id</td>
+                                            <td>
+                                                <strong>@item.Name</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary">@item.Code</span>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">@item.UniversityName</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">@item.StudentCount</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@item.AdvisorCount</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@item.Id"
+                                                       class="btn btn-sm btn-info"
+                                                       title="Detayları Görüntüle">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@item.Id"
+                                                       class="btn btn-sm btn-warning"
+                                                       title="Düzenle">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@item.Id"
+                                                       class="btn btn-sm btn-danger"
+                                                       title="Sil">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-building fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">
+                                @if (ViewBag.FilteredUniversityId != null)
+                                {
+                                    @:Bu üniversitede henüz bölüm eklenmemiş
+                                }
+                                else
+                                {
+                                    @:Henüz bölüm eklenmemiş
+                                }
+                            </h4>
+                            <p class="text-muted">İlk bölümü eklemek için aşağıdaki butona tıklayın.</p>
+                            <a asp-action="Create" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>
+                                İlk Bölümü Ekle
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
