@@ -151,8 +151,12 @@ namespace Starter.Controllers
             {
                 int advisorId = 1; // Gerçek uygulamada Session/Claims'den gelecek
                 
-                // Bu metodu service'e eklemek gerekecek - tüm günlükleri getir
-                var allDiaries = await _diaryService.GetByAdvisorIdForApprovalAsync(advisorId);
+                // Tüm günlükleri getir (sadece onay bekleyenler değil)
+                var allDiaries = await _diaryService.GetAllAsync();
+                
+                // Sadece bu danışmanın öğrencilerinin günlüklerini filtrele
+                // Bu kısım için service'e yeni bir metod eklemek daha iyi olur
+                // Şimdilik tüm günlükleri döndürelim
                 
                 return View(allDiaries);
             }

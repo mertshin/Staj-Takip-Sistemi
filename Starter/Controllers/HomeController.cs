@@ -1,52 +1,63 @@
-using Business.DTOs.AdvisorDtos;
-using Business.DTOs.DepartmentDtos;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Web.Models.ViewModels;
-namespace Web.Controllers
+
+namespace Starter.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IUniversityService _universityService;
-        private readonly IDepartmentService _departmentService;
+        private readonly IStudentService _studentService;
+        private readonly IInternshipDiaryService _diaryService;
         private readonly IAdvisorService _advisorService;
 
-        public HomeController(IUniversityService universityService,
-                              IDepartmentService departmentService,
-                              IAdvisorService advisorService)
+        public HomeController(
+            IUniversityService universityService,
+            IStudentService studentService,
+            IInternshipDiaryService diaryService,
+            IAdvisorService advisorService)
         {
             _universityService = universityService;
-            _departmentService = departmentService;
+            _studentService = studentService;
+            _diaryService = diaryService;
             _advisorService = advisorService;
         }
 
-        public async Task<IActionResult> Index(int? universityId, int? departmentId)
+        public async Task<IActionResult> Index()
         {
-            var universities = await _universityService.GetAllAsync();
-            var departments = new List<DepartmentDTO>();
-            var advisors = new List<AdvisorDTO>();
-
-            if (universityId.HasValue)
+            try
             {
-                departments = (await _departmentService.GetByUniversityIdAsync(universityId.Value)).ToList();
+                // Dashboard için istatistikler
+                var universities = await _universityService.GetAllAsync();
+                var students = await _studentService.GetAllAsync();
+                var advisors = await _advisorService.GetAllAsync();
+                var diaries = await _diaryService.GetAllAsync();
+
+                ViewBag.UniversityCount = universities.Count();
+                ViewBag.StudentCount = students.Count();
+                ViewBag.AdvisorCount = advisors.Count();
+                ViewBag.TotalDiaryCount = diaries.Count();
+                ViewBag.PendingDiaryCount = diaries.Count(d => d.ApprovalStatus == Core.Enums.InternshipStatus.Pending);
+                ViewBag.ApprovedDiaryCount = diaries.Count(d => d.ApprovalStatus == Core.Enums.InternshipStatus.Approved);
+
+                return View();
             }
-
-            if (departmentId.HasValue)
+            catch (Exception)
             {
-                var allAdvisors = await _advisorService.GetAllAsync();
-                advisors = allAdvisors.Where(a => a.DepartmentId == departmentId.Value).ToList();
+                // İlk çalıştırmada veriler yoksa varsayılan değerler
+                ViewBag.UniversityCount = 0;
+                ViewBag.StudentCount = 0;
+                ViewBag.AdvisorCount = 0;
+                ViewBag.TotalDiaryCount = 0;
+                ViewBag.PendingDiaryCount = 0;
+                ViewBag.ApprovedDiaryCount = 0;
+
+                return View();
             }
+        }
 
-            var viewModel = new HomeFilterViewModel
-            {
-                SelectedUniversityId = universityId,
-                SelectedDepartmentId = departmentId,
-                Universities = universities,
-                Departments = departments,
-                Advisors = advisors
-            };
-
-            return View(viewModel);
+        public IActionResult Privacy()
+        {
+            return View();
         }
     }
 }
