@@ -1,4 +1,5 @@
 ﻿using AutoMapper;     // DTO'ların namespace'i
+using Business.DTOs.AdvisorDtos;
 using Business.DTOs.DepartmentDtos;
 using Business.DTOs.UniversityDtos;
 using Core.Entities;    // Entitylerin namespace'i
@@ -21,6 +22,12 @@ namespace Business.Mapping
             CreateMap<DepartmentCreateDTO, Department>();
             CreateMap<DepartmentUpdateDTO, Department>();
             CreateMap<DepartmentDTO, DepartmentUpdateDTO>();
+
+            CreateMap<Advisor, AdvisorDTO>()
+    .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.Name));
+
+            CreateMap<AdvisorCreateDTO, Advisor>();
+            CreateMap<AdvisorUpdateDTO, Advisor>();
         }
     }
 }

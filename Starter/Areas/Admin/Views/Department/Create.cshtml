@@ -44,8 +44,7 @@
                                     <i class="fas fa-code me-1"></i>
                                     Bölüm Kodu *
                                 </label>
-                                <input asp-for="Code" class="form-control" placeholder="Örn: BILMUH" required
-                                       style="text-transform:uppercase" />
+                                <input asp-for="Code" class="form-control" placeholder="Örn: BILMUH" required style="text-transform:uppercase" />
                                 <span asp-validation-for="Code" class="text-danger"></span>
                             </div>
                         </div>
@@ -57,7 +56,7 @@
                                     Üniversite *
                                 </label>
                                 @Html.DropDownListFor(m => m.UniversityId,
-                                         ViewBag.UniversityId as SelectList,
+                                         ViewBag.UniversityId as List<SelectListItem>,
                                          "Üniversite Seçiniz",
                                          new { @class = "form-select", required = "required" })
                                 <span asp-validation-for="UniversityId" class="text-danger"></span>
@@ -82,19 +81,17 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
         // Bootstrap form validation
-        (function() {
+        (function () {
             'use strict';
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 var forms = document.getElementsByClassName('needs-validation');
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (form.checkValidity() === false) {
+                Array.prototype.forEach.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
                             event.preventDefault();
                             event.stopPropagation();
                         }
@@ -104,8 +101,8 @@
             }, false);
         })();
 
-        // Bölüm kodunu otomatik büyük harfe çevir
-        document.getElementById('Code').addEventListener('input', function(e) {
+        // Kod alanını otomatik büyük harfe çevir
+        document.querySelector('[name="Code"]').addEventListener('input', function (e) {
             e.target.value = e.target.value.toUpperCase();
         });
     </script>

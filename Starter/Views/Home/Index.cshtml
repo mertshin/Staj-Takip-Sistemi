@@ -1,8 +1,70 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@* @model Web.Models.ViewModels.HomeFilterViewModel
+
+@{
+    ViewData["Title"] = "Ana Sayfa - Filtreleme";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Danışman Filtreleme</h2>
+
+<form method="get" asp-action="Index" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label class="form-label">Üniversite</label>
+        <select name="universityId" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Üniversite Seçin --</option>
+            @foreach (var uni in Model.Universities)
+            {
+                <option value="@uni.Id">@uni.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Bölüm</label>
+        <select name="departmentId" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Bölüm Seçin --</option>
+            @foreach (var dept in Model.Departments)
+            {
+                <option value="@dept.Id">dept.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">Filtrele</button>
+    </div>
+</form>
+
+@if (Model.Advisors.Any())
+{
+    <h4>Danışmanlar</h4>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Ad</th>
+                <th>Soyad</th>
+                <th>Unvan</th>
+                <th>Email</th>
+                <th>Telefon</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var advisor in Model.Advisors)
+            {
+                <tr>
+                    <td>@advisor.FirstName</td>
+                    <td>@advisor.LastName</td>
+                    <td>@advisor.Title</td>
+                    <td>@advisor.Email</td>
+                    <td>@advisor.Phone</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (Model.SelectedDepartmentId.HasValue)
+{
+    <div class="alert alert-warning">Bu bölümde danışman bulunamadı.</div>
+}
+ *@
+
+            <h1>Admin Kısmına Bakınız</h1>

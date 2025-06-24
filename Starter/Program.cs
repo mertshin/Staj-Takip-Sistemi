@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddScoped<IUniversityService, UniversityService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IAdvisorService, AdvisorService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
