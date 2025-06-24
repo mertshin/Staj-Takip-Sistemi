@@ -1,0 +1,295 @@
+@model Business.DTOs.InternshipDiaryDtos.InternshipDiaryDTO
+
+@{
+    ViewData["Title"] = "Günlük İnceleme";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            Staj Günlüğü İnceleme
+                        </h4>
+                        <span class="badge bg-warning fs-6">
+                            <i class="fas fa-clock me-1"></i>
+                            @Model.ApprovalStatusText
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Öğrenci Bilgileri -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="bg-light rounded p-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary mb-2">
+                                            <i class="fas fa-user me-1"></i>
+                                            Öğrenci Bilgileri
+                                        </h6>
+                                        <p class="mb-1"><strong>Ad Soyad:</strong> @Model.StudentName</p>
+                                        <p class="mb-0"><strong>Öğrenci No:</strong> @Model.StudentNumber</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-primary mb-2">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            Günlük Bilgileri
+                                        </h6>
+                                        <p class="mb-1"><strong>Tarih:</strong> @Model.Date.ToString("dd.MM.yyyy dddd")</p>
+                                        <p class="mb-0"><strong>Çalışma Saatleri:</strong> @Model.WorkHours</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Günlük İçeriği -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-tasks me-2"></i>
+                                Yapılan Çalışma
+                            </h5>
+                            <div class="border rounded p-4 bg-light">
+                                <p class="mb-0 fs-6">@Model.WorkDone</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-align-left me-2"></i>
+                                Detaylı Açıklama
+                            </h5>
+                            <div class="border rounded p-4 bg-light" style="min-height: 120px;">
+                                <p class="mb-0 fs-6">@Model.Description</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.ApprovalStatus == Core.Enums.InternshipStatus.Pending)
+                    {
+                        <!-- Değerlendirme Formu -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-gavel me-2"></i>
+                                    Değerlendirme
+                                </h5>
+                                
+                                <form asp-action="ApproveDiary" method="post" class="needs-validation" novalidate>
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="DiaryId" value="@Model.Id" />
+                                    <input type="hidden" name="AdvisorId" value="1" /> <!-- Gerçek uygulamada session'dan gelecek -->
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <label class="form-label fw-bold">
+                                                <i class="fas fa-thumbs-up me-1"></i>
+                                                Karar *
+                                            </label>
+                                            <div class="mt-2">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="Decision" id="approve" 
+                                                           value="@((int)Core.Enums.InternshipStatus.Approved)" required>
+                                                    <label class="form-check-label text-success fw-bold" for="approve">
+                                                        <i class="fas fa-check me-1"></i>
+                                                        Onayla
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="Decision" id="reject" 
+                                                           value="@((int)Core.Enums.InternshipStatus.Rejected)" required>
+                                                    <label class="form-check-label text-danger fw-bold" for="reject">
+                                                        <i class="fas fa-times me-1"></i>
+                                                        Reddet
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                Lütfen bir karar seçin.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4" id="rejectionReasonDiv" style="display: none;">
+                                        <label for="rejectionReason" class="form-label fw-bold">
+                                            <i class="fas fa-comment me-1"></i>
+                                            Red Sebebi *
+                                        </label>
+                                        <textarea name="RejectionReason" id="rejectionReason" 
+                                                  class="form-control" 
+                                                  rows="4" 
+                                                  placeholder="Günlüğü neden reddettiğinizi açıklayın..."
+                                                  maxlength="500"></textarea>
+                                        <div class="form-text">
+                                            <span id="reasonCount">0</span>/500 karakter
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Red sebebi gereklidir.
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <a asp-action="Index" class="btn btn-secondary">
+                                            <i class="fas fa-arrow-left me-1"></i>
+                                            Geri Dön
+                                        </a>
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-save me-1"></i>
+                                            Kararı Kaydet
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.ApprovalStatus == Core.Enums.InternshipStatus.Approved)
+                    {
+                        <div class="alert alert-success">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Bu günlük onaylanmış
+                            </h6>
+                            <p class="mb-1"><strong>Onaylayan:</strong> @Model.ApprovedByAdvisorName</p>
+                            <p class="mb-0"><strong>Onay Tarihi:</strong> @Model.ApprovedDate?.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <a asp-action="Index" class="btn btn-primary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Geri Dön
+                            </a>
+                        </div>
+                    }
+                    else if (Model.ApprovalStatus == Core.Enums.InternshipStatus.Rejected)
+                    {
+                        <div class="alert alert-danger">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-times-circle me-2"></i>
+                                Bu günlük reddedilmiş
+                            </h6>
+                            <p class="mb-1"><strong>Red Sebebi:</strong> @Model.RejectionReason</p>
+                            <p class="mb-0"><strong>Red Tarihi:</strong> @Model.ApprovedDate?.ToString("dd.MM.yyyy HH:mm")</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <a asp-action="Index" class="btn btn-primary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Geri Dön
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Değerlendirme Kriterleri -->
+            @if (Model.ApprovalStatus == Core.Enums.InternshipStatus.Pending)
+            {
+                <div class="card mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Değerlendirme Kriterleri
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-success">✅ Onaylanabilir Durumlar:</h6>
+                                <ul class="text-sm">
+                                    <li>Yapılan çalışma açık ve detaylı</li>
+                                    <li>Çalışma saatleri uygun</li>
+                                    <li>Öğrenilen konular belirtilmiş</li>
+                                    <li>Profesyonel dil kullanılmış</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-danger">❌ Reddedilebilir Durumlar:</h6>
+                                <ul class="text-sm">
+                                    <li>Çok kısa veya anlamsız açıklamalar</li>
+                                    <li>Uygunsuz içerik</li>
+                                    <li>Tekrarlayan/kopyalanan metinler</li>
+                                    <li>Stajla ilgisi olmayan aktiviteler</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const approveRadio = document.getElementById('approve');
+            const rejectRadio = document.getElementById('reject');
+            const rejectionReasonDiv = document.getElementById('rejectionReasonDiv');
+            const rejectionReasonTextarea = document.getElementById('rejectionReason');
+            const reasonCount = document.getElementById('reasonCount');
+
+            function toggleRejectionReason() {
+                if (rejectRadio.checked) {
+                    rejectionReasonDiv.style.display = 'block';
+                    rejectionReasonTextarea.required = true;
+                } else {
+                    rejectionReasonDiv.style.display = 'none';
+                    rejectionReasonTextarea.required = false;
+                    rejectionReasonTextarea.value = '';
+                }
+            }
+
+            function updateReasonCount() {
+                const count = rejectionReasonTextarea.value.length;
+                reasonCount.textContent = count;
+                
+                if (count > 400) {
+                    reasonCount.style.color = '#dc3545';
+                } else if (count > 300) {
+                    reasonCount.style.color = '#fd7e14';
+                } else {
+                    reasonCount.style.color = '#6c757d';
+                }
+            }
+
+            approveRadio.addEventListener('change', toggleRejectionReason);
+            rejectRadio.addEventListener('change', toggleRejectionReason);
+            rejectionReasonTextarea.addEventListener('input', updateReasonCount);
+
+            // Bootstrap form validation
+            (function() {
+                'use strict';
+                window.addEventListener('load', function() {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    var validation = Array.prototype.filter.call(forms, function(form) {
+                        form.addEventListener('submit', function(event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        });
+    </script>
+} 

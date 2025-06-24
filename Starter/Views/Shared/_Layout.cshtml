@@ -20,13 +20,38 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                Öğrenci Portal
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="StudentPortal" asp-action="Index">Staj Günlüklerim</a></li>
+                                <li><a class="dropdown-item" asp-controller="StudentPortal" asp-action="CreateDiary">Yeni Günlük Ekle</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                Danışman Portal
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="AdvisorPortal" asp-action="Index">Bekleyen Günlükler</a></li>
+                                <li><a class="dropdown-item" asp-controller="AdvisorPortal" asp-action="AllDiaries">Tüm Günlükler</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                Admin Panel
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Dashboard</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="University" asp-action="Index">Üniversiteler</a></li>
+                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Department" asp-action="Index">Bölümler</a></li>
+                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Advisors" asp-action="Index">Danışmanlar</a></li>
+                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Student" asp-action="Index">Öğrenciler</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>

@@ -1,0 +1,205 @@
+@model Business.DTOs.InternshipDiaryDtos.InternshipDiaryCreateDTO
+
+@{
+    ViewData["Title"] = ViewBag.DiaryId != null ? "Günlük Düzenle" : "Yeni Günlük Ekle";
+    bool isEdit = ViewBag.DiaryId != null;
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas @(isEdit ? "fa-edit" : "fa-plus") me-2"></i>
+                        @(isEdit ? "Günlük Düzenle" : "Yeni Staj Günlüğü")
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="@(isEdit ? "EditDiary" : "CreateDiary")" 
+                          asp-route-id="@ViewBag.DiaryId" 
+                          method="post" 
+                          class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Date" class="form-label fw-bold">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Tarih *
+                                </label>
+                                <input asp-for="Date" type="date" class="form-control" required />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="StartTime" class="form-label fw-bold">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Başlangıç *
+                                </label>
+                                <input asp-for="StartTime" type="time" class="form-control" required />
+                                <span asp-validation-for="StartTime" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="EndTime" class="form-label fw-bold">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Bitiş *
+                                </label>
+                                <input asp-for="EndTime" type="time" class="form-control" required />
+                                <span asp-validation-for="EndTime" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="WorkDone" class="form-label fw-bold">
+                                <i class="fas fa-tasks me-1"></i>
+                                Yapılan Çalışma *
+                            </label>
+                            <textarea asp-for="WorkDone" 
+                                      class="form-control" 
+                                      rows="4" 
+                                      placeholder="Bugün hangi işleri gerçekleştirdiniz? (Örn: Veritabanı tasarımı, kod yazımı, test, vb.)"
+                                      required
+                                      maxlength="500"></textarea>
+                            <div class="form-text">
+                                <span id="workDoneCount">0</span>/500 karakter
+                            </div>
+                            <span asp-validation-for="WorkDone" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1"></i>
+                                Detaylı Açıklama *
+                            </label>
+                            <textarea asp-for="Description" 
+                                      class="form-control" 
+                                      rows="6" 
+                                      placeholder="Yaptığınız işlerin detaylarını, karşılaştığınız zorlukları ve öğrendiklerinizi açıklayın..."
+                                      required
+                                      maxlength="1000"></textarea>
+                            <div class="form-text">
+                                <span id="descriptionCount">0</span>/1000 karakter
+                            </div>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <input asp-for="InternshipApplicationId" type="hidden" />
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas @(isEdit ? "fa-save" : "fa-plus") me-1"></i>
+                                @(isEdit ? "Güncelleştir" : "Günlük Kaydet")
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Yardım Kartı -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-lightbulb me-1"></i>
+                        İpuçları
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li><strong>Detaylı yazın:</strong> Yaptığınız işleri mümkün olduğunca ayrıntılı açıklayın.</li>
+                        <li><strong>Öğrendiklerinizi belirtin:</strong> O gün hangi yeni bilgileri öğrendiğinizi yazın.</li>
+                        <li><strong>Zorlukları paylaşın:</strong> Karşılaştığınız problemleri ve çözümlerini belirtin.</li>
+                        <li><strong>Günlük tutun:</strong> Her çalışma günü için mutlaka günlük oluşturun.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Karakter sayacı
+        function updateCharacterCount(textarea, countElement) {
+            const count = textarea.value.length;
+            const maxLength = textarea.getAttribute('maxlength');
+            countElement.textContent = count;
+            
+            if (count > maxLength * 0.9) {
+                countElement.style.color = '#dc3545';
+            } else if (count > maxLength * 0.7) {
+                countElement.style.color = '#fd7e14';
+            } else {
+                countElement.style.color = '#6c757d';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const workDoneTextarea = document.querySelector('[name="WorkDone"]');
+            const workDoneCount = document.getElementById('workDoneCount');
+            const descriptionTextarea = document.querySelector('[name="Description"]');
+            const descriptionCount = document.getElementById('descriptionCount');
+
+            // İlk yükleme
+            updateCharacterCount(workDoneTextarea, workDoneCount);
+            updateCharacterCount(descriptionTextarea, descriptionCount);
+
+            // Her karakter girişinde güncelle
+            workDoneTextarea.addEventListener('input', function() {
+                updateCharacterCount(this, workDoneCount);
+            });
+
+            descriptionTextarea.addEventListener('input', function() {
+                updateCharacterCount(this, descriptionCount);
+            });
+
+            // Başlangıç ve bitiş saati kontrolü
+            const startTime = document.querySelector('[name="StartTime"]');
+            const endTime = document.querySelector('[name="EndTime"]');
+
+            function validateTime() {
+                if (startTime.value && endTime.value) {
+                    if (startTime.value >= endTime.value) {
+                        endTime.setCustomValidity('Bitiş saati başlangıç saatinden sonra olmalıdır');
+                    } else {
+                        endTime.setCustomValidity('');
+                    }
+                }
+            }
+
+            startTime.addEventListener('change', validateTime);
+            endTime.addEventListener('change', validateTime);
+        });
+
+        // Bootstrap form validation
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+} 

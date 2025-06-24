@@ -1,0 +1,207 @@
+@model IEnumerable<Business.DTOs.StudentDtos.StudentDTO>
+
+@{
+    ViewData["Title"] = "Öğrenci Yönetimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="fas fa-user-graduate me-2"></i>
+                    Öğrenci Yönetimi
+                </h2>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Yeni Öğrenci Ekle
+                </a>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="card shadow">
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>
+                                            <i class="fas fa-id-badge me-1"></i>
+                                            Öğrenci No
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-user me-1"></i>
+                                            Ad Soyad
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-envelope me-1"></i>
+                                            E-posta
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-building me-1"></i>
+                                            Bölüm
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-user-tie me-1"></i>
+                                            Danışman
+                                        </th>
+                                        <th>
+                                            <i class="fas fa-chart-line me-1"></i>
+                                            Staj Durumu
+                                        </th>
+                                        <th class="text-center">
+                                            <i class="fas fa-cogs me-1"></i>
+                                            İşlemler
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@student.StudentNumber</strong>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm rounded-circle bg-primary text-white me-2 d-flex align-items-center justify-content-center">
+                                                        @student.FirstName.Substring(0, 1).ToUpper()
+                                                    </div>
+                                                    <div>
+                                                        <strong>@student.FirstName @student.LastName</strong>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@student.Email</td>
+                                            <td>
+                                                <div>
+                                                    <strong>@student.DepartmentName</strong>
+                                                    <br>
+                                                    <small class="text-muted">@student.UniversityName</small>
+                                                </div>
+                                            </td>
+                                            <td>@student.AdvisorName</td>
+                                            <td>
+                                                @if (student.InternshipApplicationCount > 0)
+                                                {
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check me-1"></i>
+                                                        Aktif (@student.InternshipApplicationCount)
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">
+                                                        <i class="fas fa-minus me-1"></i>
+                                                        Başvuru Yok
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@student.Id" 
+                                                       class="btn btn-sm btn-info" title="Detayları Görüntüle">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@student.Id" 
+                                                       class="btn btn-sm btn-warning" title="Düzenle">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-danger" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#deleteModal@(student.Id)"
+                                                            title="Sil">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-graduate fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">Henüz öğrenci eklenmemiş</h4>
+                            <p class="text-muted">İlk öğrenciyi eklemek için aşağıdaki butona tıklayın.</p>
+                            <a asp-action="Create" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>
+                                İlk Öğrenciyi Ekle
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Silme Modal'ları -->
+@foreach (var student in Model)
+{
+    <div class="modal fade" id="deleteModal@(student.Id)" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                        Öğrenci Sil
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>@student.FirstName @student.LastName</strong> adlı öğrenciyi silmek istediğinizden emin misiniz?</p>
+                    <div class="alert alert-warning">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Bu işlem geri alınamaz. Öğrenciye ait tüm staj başvuruları ve günlükleri de silinecektir.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <form asp-action="Delete" asp-route-id="@student.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>
+                            Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Styles {
+    <style>
+        .avatar-sm {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+    </style>
+} 
