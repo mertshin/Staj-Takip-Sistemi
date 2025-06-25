@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Business.Interfaces;
 using Business.DTOs.InternshipDiaryDtos;
 using Core.Enums;
+using System.Security.Claims;
 
 namespace Starter.Controllers
 {
+    [Authorize(Roles = "Advisor,Admin")]
     public class AdvisorPortalController : Controller
     {
         private readonly IInternshipDiaryService _diaryService;

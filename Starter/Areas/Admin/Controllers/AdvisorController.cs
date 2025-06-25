@@ -2,10 +2,12 @@
 using Business.DTOs.AdvisorDtos;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdvisorsController : Controller
     {
         private readonly IAdvisorService _advisorService;

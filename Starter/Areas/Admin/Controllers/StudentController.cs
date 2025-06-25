@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Business.Interfaces;
 using Business.DTOs.StudentDtos;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Starter.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class StudentController : Controller
+[Authorize(Roles = "Admin")]
+public class StudentController : Controller
     {
         private readonly IStudentService _studentService;
         private readonly IDepartmentService _departmentService;
@@ -133,6 +135,38 @@ namespace Starter.Areas.Admin.Controllers
             else
             {
                 ViewBag.AdvisorId = new SelectList(new List<dynamic>(), "Id", "Name");
+            }
+        }
+
+        // GET: GetAdvisorsByDepartment (AJAX endpoint)
+        [HttpGet]
+        public async Task<IActionResult> GetAdvisorsByDepartment(int departmentId)
+        {
+            try
+            {
+                Console.WriteLine($"GetAdvisorsByDepartment called with departmentId: {departmentId}");
+                
+                // AdvisorService'i doğrudan kullanarak danışmanları çekelim
+                var allAdvisors = await _advisorService.GetAllAsync();
+                var departmentAdvisors = allAdvisors.Where(a => a.DepartmentId == departmentId).ToList();
+                
+                var result = departmentAdvisors.Select(a => new { 
+                    id = a.Id, 
+                    name = $"{a.Title} {a.FirstName} {a.LastName}"
+                }).ToList();
+                
+                Console.WriteLine($"Found {result.Count} advisors for department {departmentId}");
+                foreach (var advisor in result)
+                {
+                    Console.WriteLine($"Advisor: Id={advisor.id}, Name={advisor.name}");
+                }
+                
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetAdvisorsByDepartment: {ex.Message}");
+                return Json(new List<object>());
             }
         }
     }

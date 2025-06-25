@@ -5,6 +5,8 @@
     bool isEdit = ViewBag.DiaryId != null;
 }
 
+<!-- DEBUG: Page loaded at @DateTime.Now -->
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -22,6 +24,14 @@
                             <i class="fas fa-exclamation-circle me-2"></i>
                             @TempData["Error"]
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (ViewBag.ApplicationInfo != null)
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Aktif Staj Başvurusu:</strong> @ViewBag.ApplicationInfo
                         </div>
                     }
 

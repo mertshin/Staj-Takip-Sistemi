@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Data.Context
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
            : base(options)
@@ -22,6 +24,8 @@ namespace Data.Context
         public DbSet<InternshipPlace> InternshipPlaces { get; set; }
         public DbSet<InternshipDiary> InternshipDiaries { get; set; }
         public DbSet<InternshipEvaluation> InternshipEvaluations { get; set; }
+        
+        // Identity için gerekli DbSet'ler otomatik olarak eklenir
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -44,7 +48,18 @@ namespace Data.Context
                 .HasForeignKey(a => a.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // User relationships
+            modelBuilder.Entity<Student>()
+                .HasOne(s => s.User)
+                .WithOne(u => u.Student)
+                .HasForeignKey<Student>(s => s.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<Advisor>()
+                .HasOne(a => a.User)
+                .WithOne(u => u.Advisor)
+                .HasForeignKey<Advisor>(a => a.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
     }

@@ -1,0 +1,196 @@
+@model Business.DTOs.StudentDtos.StudentCreateDTO
+
+@{
+    ViewData["Title"] = "Yeni Öğrenci Ekle";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-graduate me-2"></i>
+                        Yeni Öğrenci Ekle
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label fw-bold">
+                                    <i class="fas fa-user me-1"></i>
+                                    Ad *
+                                </label>
+                                <input asp-for="FirstName" class="form-control" placeholder="Öğrencinin adı" required />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label fw-bold">
+                                    <i class="fas fa-user me-1"></i>
+                                    Soyad *
+                                </label>
+                                <input asp-for="LastName" class="form-control" placeholder="Öğrencinin soyadı" required />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StudentNumber" class="form-label fw-bold">
+                                    <i class="fas fa-id-badge me-1"></i>
+                                    Öğrenci Numarası *
+                                </label>
+                                <input asp-for="StudentNumber" class="form-control" placeholder="Örn: 2021123456" required />
+                                <span asp-validation-for="StudentNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="IdentityNumber" class="form-label fw-bold">
+                                    <i class="fas fa-id-card me-1"></i>
+                                    T.C. Kimlik No *
+                                </label>
+                                <input asp-for="IdentityNumber" class="form-control" placeholder="11 haneli T.C. kimlik numarası" required maxlength="11" />
+                                <span asp-validation-for="IdentityNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label fw-bold">
+                                    <i class="fas fa-envelope me-1"></i>
+                                    E-posta *
+                                </label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="ornek@ogrenci.edu.tr" required />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Phone" class="form-label fw-bold">
+                                    <i class="fas fa-phone me-1"></i>
+                                    Telefon
+                                </label>
+                                <input asp-for="Phone" class="form-control" placeholder="0555 123 45 67" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DepartmentId" class="form-label fw-bold">
+                                    <i class="fas fa-building me-1"></i>
+                                    Bölüm *
+                                </label>
+                                <select asp-for="DepartmentId" class="form-select" asp-items="ViewBag.DepartmentId" required>
+                                    <option value="">-- Bölüm Seçiniz --</option>
+                                </select>
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="AdvisorId" class="form-label fw-bold">
+                                    <i class="fas fa-user-tie me-1"></i>
+                                    Danışman *
+                                </label>
+                                <select asp-for="AdvisorId" class="form-select" asp-items="ViewBag.AdvisorId" required>
+                                    <option value="">-- Önce bölüm seçiniz --</option>
+                                </select>
+                                <span asp-validation-for="AdvisorId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-1"></i>
+                                Öğrenci Ekle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const departmentSelect = document.getElementById('DepartmentId');
+            const advisorSelect = document.getElementById('AdvisorId');
+
+            departmentSelect.addEventListener('change', function() {
+                const departmentId = this.value;
+                
+                console.log('Department changed:', departmentId);
+                
+                // Danışman dropdown'ını temizle
+                advisorSelect.innerHTML = '<option value="">-- Yükleniyor... --</option>';
+                
+                if (departmentId) {
+                    const url = `/Admin/Student/GetAdvisorsByDepartment?departmentId=${departmentId}`;
+                    console.log('Fetching from URL:', url);
+                    
+                    // AJAX ile danışmanları getir
+                    fetch(url)
+                        .then(response => {
+                            console.log('Response status:', response.status);
+                            console.log('Response ok:', response.ok);
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Received data:', data);
+                            console.log('Data length:', data.length);
+                            
+                            advisorSelect.innerHTML = '<option value="">-- Danışman Seçiniz --</option>';
+                            data.forEach(advisor => {
+                                console.log('Adding advisor:', advisor);
+                                const option = document.createElement('option');
+                                option.value = advisor.id;
+                                option.textContent = advisor.name;
+                                advisorSelect.appendChild(option);
+                            });
+                            
+                            console.log('Final advisor select options count:', advisorSelect.options.length);
+                        })
+                        .catch(error => {
+                            console.error('Danışmanlar yüklenirken hata:', error);
+                            advisorSelect.innerHTML = '<option value="">-- Hata oluştu --</option>';
+                        });
+                } else {
+                    advisorSelect.innerHTML = '<option value="">-- Önce bölüm seçiniz --</option>';
+                }
+            });
+
+            // Bootstrap form validation
+            (function() {
+                'use strict';
+                window.addEventListener('load', function() {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    var validation = Array.prototype.filter.call(forms, function(form) {
+                        form.addEventListener('submit', function(event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        });
+    </script>
+} 

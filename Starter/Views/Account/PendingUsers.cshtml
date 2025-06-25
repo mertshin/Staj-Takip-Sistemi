@@ -1,0 +1,91 @@
+@model List<Business.DTOs.AuthDtos.UserListDTO>
+@{
+    ViewData["Title"] = "Onay Bekleyen Kullanıcılar";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Onay Bekleyen Kullanıcılar</h3>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Success"]
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Ad Soyad</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Kayıt Tarihi</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model)
+                                    {
+                                        <tr>
+                                            <td>@user.FirstName @user.LastName</td>
+                                            <td>@user.Email</td>
+                                            <td>
+                                                @switch (user.Role)
+                                                {
+                                                    case "Student":
+                                                        <span class="badge bg-primary">Öğrenci</span>
+                                                        break;
+                                                    case "Advisor":
+                                                        <span class="badge bg-success">Danışman</span>
+                                                        break;
+                                                    case "Admin":
+                                                        <span class="badge bg-danger">Admin</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@user.Role</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>@user.CreatedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                            <td>
+                                                <form asp-action="ApproveUser" method="post" style="display: inline;">
+                                                    <input type="hidden" name="userId" value="@user.Id" />
+                                                    <button type="submit" class="btn btn-success btn-sm"
+                                                            onclick="return confirm('Bu kullanıcıyı onaylamak istediğinizden emin misiniz?')">
+                                                        <i class="fas fa-check"></i> Onayla
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <h5>Onay bekleyen kullanıcı bulunmuyor.</h5>
+                            <p>Tüm kullanıcılar onaylanmış durumda.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

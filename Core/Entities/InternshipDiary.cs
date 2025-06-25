@@ -11,8 +11,8 @@ namespace Core.Entities
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public string WorkDone { get; set; }
-        public string Description { get; set; }
+        public string? WorkDone { get; set; }
+        public string? Description { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         
@@ -24,6 +24,6 @@ namespace Core.Entities
         public Advisor? ApprovedByAdvisor { get; set; }
 
         public int InternshipApplicationId { get; set; }
-        public InternshipApplication InternshipApplication { get; set; }
+        public InternshipApplication? InternshipApplication { get; set; }
     }
 }

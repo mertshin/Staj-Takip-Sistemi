@@ -1,0 +1,135 @@
+@model Business.DTOs.StudentDtos.StudentDTO
+
+@{
+    ViewData["Title"] = "Öğrenci Detayları";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">@ViewData["Title"]</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Admin Panel</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Student" asp-action="Index">Öğrenciler</a></li>
+        <li class="breadcrumb-item active">Detaylar</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-graduate me-2"></i>
+                        @Model.FirstName @Model.LastName
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Öğrenci No:</strong></td>
+                                    <td>@Model.StudentNumber</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ad Soyad:</strong></td>
+                                    <td>@Model.FirstName @Model.LastName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>TC Kimlik No:</strong></td>
+                                    <td>@Model.IdentityNumber</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>E-posta:</strong></td>
+                                    <td>@Model.Email</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telefon:</strong></td>
+                                    <td>@Model.Phone</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Üniversite:</strong></td>
+                                    <td>@Model.UniversityName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bölüm:</strong></td>
+                                    <td>@Model.DepartmentName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bölüm Kodu:</strong></td>
+                                    <td>@Model.DepartmentCode</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Danışman:</strong></td>
+                                    <td>@Model.AdvisorName</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Staj Başvuru Sayısı:</strong></td>
+                                    <td>@Model.InternshipApplicationCount</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-area="Admin" asp-controller="Student" asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                        </a>
+                        <div>
+                            <a asp-area="Admin" asp-controller="Student" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                <i class="fas fa-edit me-2"></i>Düzenle
+                            </a>
+                            <a asp-area="Admin" asp-controller="Student" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-2"></i>Sil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Ek Bilgiler
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Bu öğrenci <strong>@Model.UniversityName</strong> üniversitesinin 
+                        <strong>@Model.DepartmentName</strong> bölümünde kayıtlıdır.
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Phone))
+                    {
+                        <div class="alert alert-light">
+                            <i class="fas fa-phone me-2"></i>
+                            <strong>İletişim:</strong><br>
+                            <a href="tel:@Model.Phone">@Model.Phone</a><br>
+                            <a href="mailto:@Model.Email">@Model.Email</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Başarı mesajı göster
+        @if(TempData["SuccessMessage"] != null)
+        {
+            <text>
+            toastr.success('@TempData["SuccessMessage"]');
+            </text>
+        }
+    </script>
+} 

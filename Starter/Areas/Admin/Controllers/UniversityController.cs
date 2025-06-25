@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Business.Interfaces;
 using Business.DTOs.UniversityDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Starter.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class UniversityController : Controller
     {
         private readonly IUniversityService _universityService;

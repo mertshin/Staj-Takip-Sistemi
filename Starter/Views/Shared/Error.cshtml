@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Hata";
+    int statusCode = ViewContext.HttpContext.Response.StatusCode;
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        @switch (statusCode)
+                        {
+                            case 401:
+                                @:Yetkisiz Erişim
+                                break;
+                            case 403:
+                                @:Erişim Yasak
+                                break;
+                            case 404:
+                                @:Sayfa Bulunamadı
+                                break;
+                            default:
+                                @:Bir Hata Oluştu
+                                break;
+                        }
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @switch (statusCode)
+                    {
+                        case 401:
+                            <p class="lead">Bu sayfaya erişim yetkiniz bulunmamaktadır.</p>
+                            <p>Lütfen önce sisteme giriş yapın veya uygun yetkilere sahip bir hesapla giriş yapın.</p>
+                            <div class="mt-3">
+                                <a href="@Url.Action("Login", "Account")" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                                </a>
+                                <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                            break;
+                        case 403:
+                            <p class="lead">Bu işlemi gerçekleştirmek için yetkiniz bulunmamaktadır.</p>
+                            <p>Bu sayfaya erişmek için farklı bir rol veya izin gerekiyor olabilir.</p>
+                            <div class="mt-3">
+                                <a href="javascript:history.back()" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Geri Dön
+                                </a>
+                                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                            break;
+                        case 404:
+                            <p class="lead">Aradığınız sayfa bulunamadı.</p>
+                            <p>Sayfa taşınmış, silinmiş veya yanlış adres girmiş olabilirsiniz.</p>
+                            <div class="mt-3">
+                                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                            break;
+                        default:
+                            <p class="lead">Beklenmeyen bir hata oluştu.</p>
+                            <p>Sorun devam ederse lütfen sistem yöneticisi ile iletişime geçin.</p>
+                            <div class="mt-3">
+                                <a href="javascript:history.back()" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Geri Dön
+                                </a>
+                                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                            break;
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

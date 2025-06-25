@@ -1,5 +1,6 @@
 using Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Starter.Controllers
 {
@@ -57,6 +58,35 @@ namespace Starter.Controllers
 
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+        // Debug action - Authentication durumunu kontrol et
+        public IActionResult Debug()
+        {
+            ViewBag.IsAuthenticated = User.Identity?.IsAuthenticated ?? false;
+            ViewBag.UserName = User.Identity?.Name ?? "Anonymous";
+            ViewBag.Claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+            
+            // Console'a da yazdır
+            Console.WriteLine($"Debug Action - User authenticated: {User.Identity?.IsAuthenticated}");
+            Console.WriteLine($"User name: {User.Identity?.Name}");
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
+            }
+            
+            return View();
+        }
+
+        [Route("Home/Error")]
+        public IActionResult Error(int? statusCode = null)
+        {
+            if (statusCode.HasValue)
+            {
+                Response.StatusCode = statusCode.Value;
+            }
+            
             return View();
         }
     }

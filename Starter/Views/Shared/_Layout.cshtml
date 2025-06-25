@@ -24,37 +24,88 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
-                                Öğrenci Portal
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="StudentPortal" asp-action="Index">Staj Günlüklerim</a></li>
-                                <li><a class="dropdown-item" asp-controller="StudentPortal" asp-action="CreateDiary">Yeni Günlük Ekle</a></li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Debug">🔍 Debug</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
-                                Danışman Portal
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="AdvisorPortal" asp-action="Index">Bekleyen Günlükler</a></li>
-                                <li><a class="dropdown-item" asp-controller="AdvisorPortal" asp-action="AllDiaries">Tüm Günlükler</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
-                                Admin Panel
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Dashboard</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="University" asp-action="Index">Üniversiteler</a></li>
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Department" asp-action="Index">Bölümler</a></li>
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Advisors" asp-action="Index">Danışmanlar</a></li>
-                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Student" asp-action="Index">Öğrenciler</a></li>
-                            </ul>
-                        </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if (User.IsInRole("Student"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                        Öğrenci Portal
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="StudentPortal" asp-action="Index">Staj Günlüklerim</a></li>
+                                        <li><a class="dropdown-item" asp-controller="StudentPortal" asp-action="CreateDiary">Yeni Günlük Ekle</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (User.IsInRole("Advisor") || User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                        Danışman Portal
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-controller="AdvisorPortal" asp-action="Index">Bekleyen Günlükler</a></li>
+                                        <li><a class="dropdown-item" asp-controller="AdvisorPortal" asp-action="AllDiaries">Tüm Günlükler</a></li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                        Admin Panel
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Dashboard</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="University" asp-action="Index">Üniversiteler</a></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Department" asp-action="Index">Bölümler</a></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Advisors" asp-action="Index">Danışmanlar</a></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Student" asp-action="Index">Öğrenciler</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-controller="Account" asp-action="PendingUsers">Kullanıcı Onayları</a></li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user"></i> @User.Identity.Name
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profil</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="post" asp-controller="Account" asp-action="Logout" style="display: inline;">
+                                            <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left;">
+                                                Çıkış Yap
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt"></i> Giriş Yap
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">
+                                    <i class="fas fa-user-plus"></i> Kayıt Ol
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
